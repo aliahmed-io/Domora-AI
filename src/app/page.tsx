@@ -16,6 +16,10 @@ export default async function HomePage() {
             include: {
               leases: {
                 where: { status: { in: ["ACTIVE", "EXPIRING_SOON"] } },
+                include: { obligations: true },
+              },
+              maintenanceRequests: {
+                where: { status: { in: ["OPEN", "ASSIGNED", "IN_PROGRESS"] } },
               },
             },
           },
@@ -24,16 +28,36 @@ export default async function HomePage() {
     },
   });
 
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
+  const currentMonth = now.getUTCMonth() + 1;
+
   const allUnits = properties.flatMap((p) =>
     p.buildings.flatMap((b) => b.units)
   );
   const occupiedCount = allUnits.filter((u) => u.status === "OCCUPIED").length;
   const occupancyPct =
     allUnits.length > 0 ? Math.round((occupiedCount / allUnits.length) * 100) : 0;
-  const monthlyScheduledRent = allUnits.reduce(
-    (sum, u) => sum + u.leases.reduce((ls, l) => ls + l.monthlyRent, 0),
-    0
-  );
+
+  let monthlyScheduledRent = 0;
+  let collectedMtd = 0;
+  let overdueTotal = 0;
+  let openMaintenance = 0;
+
+  for (const u of allUnits) {
+    openMaintenance += u.maintenanceRequests.length;
+    for (const l of u.leases) {
+      monthlyScheduledRent += l.monthlyRent;
+      for (const ob of l.obligations) {
+        if (ob.periodYear === currentYear && ob.periodMonth === currentMonth) {
+          collectedMtd += ob.amountPaid;
+        }
+        if (ob.status === "OVERDUE") {
+          overdueTotal += Math.max(0, ob.amountDue - ob.amountPaid);
+        }
+      }
+    }
+  }
 
   return (
     <DomoraShell
@@ -48,6 +72,9 @@ export default async function HomePage() {
           unitCount: allUnits.length,
           occupancyPct,
           monthlyScheduledRent,
+          collectedMtd,
+          overdueTotal,
+          openMaintenance,
         }}
         properties={properties.map((p) => ({
           id: p.id,
