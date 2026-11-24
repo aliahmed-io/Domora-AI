@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: domora-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: domora
+      POSTGRES_PASSWORD: domora_dev_password
+      POSTGRES_DB: domora_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - domora_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U domora -d domora_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  domora_pgdata:
