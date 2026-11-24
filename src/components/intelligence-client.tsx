@@ -11,7 +11,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import { ShieldAlert, Sparkles, TrendingUp, AlertTriangle } from "lucide-react";
+import { ShieldAlert, AlertTriangle } from "lucide-react";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import type { MlEvaluationReport } from "@/lib/intelligence";
 
@@ -80,14 +80,11 @@ export function IntelligenceClient({
 
   return (
     <div className="space-y-12">
-      <div className="border-b border-[#C5A88A] pb-5">
-        <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-          Dual-Layer Analytics · Rule-Based + Scikit-Learn Advisory
-        </p>
-        <h1 className="font-display text-4xl text-[#262824] mt-1">
-          AI Portfolio Intelligence
+      <div className="border-b border-[#C5A88A] pb-6">
+        <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
+          Portfolio Intelligence
         </h1>
-        <p className="text-sm text-[#5A5C56] mt-1 max-w-3xl">
+        <p className="text-sm text-[#5A5C56] mt-2 max-w-3xl">
           Deterministic portfolio rules paired with a transparent comparison of
           Logistic Regression and Random Forest models trained on non-sensitive
           financial &amp; lease behavior features.
@@ -97,9 +94,8 @@ export function IntelligenceClient({
       {/* Level A — Rule-Based Intelligence */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-3xl text-[#262824] flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-[#6F795E]" />
-            <span>Level A — Rule-Based Intelligence</span>
+          <h2 className="font-display text-3xl text-[#262824]">
+            Level A — Rule-Based Intelligence
           </h2>
           <div className="flex items-center gap-6 text-xs font-mono-num">
             <span>
@@ -208,9 +204,8 @@ export function IntelligenceClient({
       {/* Level B — Predictive Analytics */}
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h2 className="font-display text-3xl text-[#262824] flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[#8C4A3D]" />
-            <span>Level B — Predictive Payment Risk (Advisory)</span>
+          <h2 className="font-display text-3xl text-[#262824]">
+            Level B — Predictive Payment Risk (Advisory)
           </h2>
           <span className="font-mono-num text-xs text-[#5A5C56]">
             Dataset: n={mlReport.dataset.total_records} synthetic obligations

@@ -95,15 +95,12 @@ export function PaymentsClient({ obligations, role }: PaymentsClientProps) {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-6">
         <div>
-          <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-            Manual Rent Ledger · Non-Gateway Recording
-          </p>
-          <h1 className="font-display text-4xl text-[#262824] mt-1">
+          <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
             Rent &amp; Payments
           </h1>
-          <p className="text-sm text-[#5A5C56] mt-1">
+          <p className="text-sm text-[#5A5C56] mt-2">
             Monthly rent obligations, partial payment tracking, outstanding
             balances, and printable manual receipts.
           </p>

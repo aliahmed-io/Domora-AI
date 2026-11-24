@@ -34,10 +34,7 @@ export default async function HomePage() {
       >
         <div className="space-y-8">
           <section className="border border-[#C5A88A] bg-[#FAF5EE] p-8 sm:p-12">
-            <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-              Resident Portal · Scoped Access
-            </p>
-            <h1 className="font-display text-4xl sm:text-5xl text-[#262824] mt-2">
+            <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
               Welcome home, {tenant?.fullName ?? "Resident"}.
             </h1>
             <p className="text-sm text-[#5A5C56] mt-2 max-w-2xl">

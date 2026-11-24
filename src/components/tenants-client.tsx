@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search, Pencil, FileUp, X, Mail, Phone } from "lucide-react";
+import { Plus, Search, Pencil, X, Mail, Phone } from "lucide-react";
+import { FileDropzone } from "@/components/file-dropzone";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { DemoRole } from "@/lib/auth";
 
@@ -117,9 +118,8 @@ export function TenantsClient({ tenants, role }: TenantsClientProps) {
     }
   }
 
-  async function handleDocumentUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !selected) return;
+  async function handleDocumentFile(file: File) {
+    if (!selected) return;
     setUploading(true);
     setError(null);
     try {
@@ -140,23 +140,19 @@ export function TenantsClient({ tenants, role }: TenantsClientProps) {
       setError(err instanceof Error ? err.message : "Document upload failed");
     } finally {
       setUploading(false);
-      e.target.value = "";
     }
   }
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-6">
         <div>
-          <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-            Resident Dossiers · Fictional Demo Data
-          </p>
-          <h1 className="font-display text-4xl text-[#262824] mt-1">
+          <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
             Tenant Directory
           </h1>
-          <p className="text-sm text-[#5A5C56] mt-1">
+          <p className="text-sm text-[#5A5C56] mt-2">
             Contact profiles, lease history, payment records, maintenance tickets,
-            and validated document attachments.
+            and document attachments.
           </p>
         </div>
 
@@ -340,24 +336,21 @@ export function TenantsClient({ tenants, role }: TenantsClientProps) {
               </div>
 
               {/* Documents */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-mono-num uppercase tracking-wider text-[#5A5C56]">
-                    Documents ({selected.documents.length})
-                  </h3>
-                  {role === "MANAGER" && (
-                    <label className="inline-flex items-center gap-1.5 border border-[#C5A88A] px-2.5 py-1 text-xs cursor-pointer hover:bg-[#F5EBDF]">
-                      <FileUp className="h-3.5 w-3.5" />
-                      <span>{uploading ? "Uploading..." : "Attach File"}</span>
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png,.webp"
-                        onChange={handleDocumentUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
+              <div className="space-y-3">
+                <h3 className="text-xs font-medium text-[#5A5C56]">
+                  Documents ({selected.documents.length})
+                </h3>
+                {role === "MANAGER" && (
+                  <FileDropzone
+                    disabled={uploading}
+                    label={
+                      uploading
+                        ? "Uploading document..."
+                        : "Drag and drop tenant ID or agreement (PDF, PNG, JPG), or click to browse"
+                    }
+                    onFileSelected={handleDocumentFile}
+                  />
+                )}
                 {selected.documents.length > 0 ? (
                   <ul className="border border-[#C5A88A]/60 divide-y divide-[#C5A88A]/40 text-xs">
                     {selected.documents.map((d) => (

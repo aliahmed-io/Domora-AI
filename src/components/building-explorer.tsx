@@ -119,13 +119,10 @@ export function BuildingExplorer({
       {/* Header & Building Selector */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-[#C5A88A] pb-5">
         <div>
-          <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-            Signature Interface · Spatial Occupancy
-          </p>
-          <h1 className="font-display text-4xl text-[#262824] mt-1">
+          <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
             Building Explorer
           </h1>
-          <p className="text-sm text-[#5A5C56] mt-1">
+          <p className="text-sm text-[#5A5C56] mt-2">
             Select a floor and unit to inspect resident occupancy, lease
             expiration, rent balance, and active maintenance.
           </p>

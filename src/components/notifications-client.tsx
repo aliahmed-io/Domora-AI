@@ -60,15 +60,12 @@ export function NotificationsClient({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-6">
         <div>
-          <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-            Persistent Queue · Idempotent Event Deduplication
-          </p>
-          <h1 className="font-display text-4xl text-[#262824] mt-1">
+          <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
             Notification Center
           </h1>
-          <p className="text-sm text-[#5A5C56] mt-1">
+          <p className="text-sm text-[#5A5C56] mt-2">
             Automated alerts for rent due dates, overdue balances, lease
             expirations, maintenance updates, and vacant units.
           </p>
@@ -112,15 +109,14 @@ export function NotificationsClient({
             <div
               key={n.id}
               className={cn(
-                "p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors",
-                !n.isRead ? "bg-[#FAF5EE]" : "bg-[#F5EBDF]/60 opacity-80"
+                "p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors border-l-2",
+                !n.isRead
+                  ? "border-l-[#8C4A3D] bg-[#FAF5EE]"
+                  : "border-l-transparent bg-[#F5EBDF]/60 opacity-80"
               )}
             >
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  {!n.isRead && (
-                    <span className="h-2 w-2 bg-[#8C4A3D] inline-block" />
-                  )}
                   <span className="font-mono-num text-[11px] px-2 py-0.5 border border-[#C5A88A] bg-[#F5EBDF]">
                     {n.triggerType}
                   </span>

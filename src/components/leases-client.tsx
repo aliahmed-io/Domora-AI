@@ -128,15 +128,12 @@ export function LeasesClient({ leases, units, tenants, role }: LeasesClientProps
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#C5A88A] pb-6">
         <div>
-          <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-            Contractual Ledger · Overlap Protection Active
-          </p>
-          <h1 className="font-display text-4xl text-[#262824] mt-1">
+          <h1 className="font-display text-4xl sm:text-5xl text-[#262824]">
             Lease Management
           </h1>
-          <p className="text-sm text-[#5A5C56] mt-1">
+          <p className="text-sm text-[#5A5C56] mt-2">
             Manage lease terms, security deposits, renewal status, early
             terminations, and expiration reminders.
           </p>

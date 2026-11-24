@@ -166,10 +166,7 @@ export function PortfolioClient({ initialProperties }: PortfolioClientProps) {
       >
         <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#C5A88A]">
           <div className="space-y-4">
-            <p className="font-mono-num text-xs uppercase tracking-[0.2em] text-[#8C4A3D]">
-              Portfolio Ledger · Architectural Stewardship
-            </p>
-            <h1 className="font-display text-4xl sm:text-6xl leading-[1.05] text-[#262824]">
+            <h1 className="font-display text-4xl sm:text-6xl leading-[1.03] text-[#262824]">
               Spaces managed with architectural precision.
             </h1>
             <p className="max-w-xl text-sm sm:text-base text-[#5A5C56] leading-relaxed">
