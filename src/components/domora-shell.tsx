@@ -15,7 +15,7 @@ interface DomoraShellProps {
 }
 
 const NAV_ITEMS = [
-  { href: "/", label: "Portfolio", managerOnly: false },
+  { href: "/portfolio", label: "Portfolio", managerOnly: false },
   { href: "/explorer", label: "Explorer", managerOnly: true },
   { href: "/tenants", label: "Tenants", managerOnly: false },
   { href: "/leases", label: "Leases", managerOnly: false },
@@ -73,10 +73,7 @@ export function DomoraShell({
               className="hidden lg:flex items-center gap-6"
             >
               {visibleNav.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
+                const active = pathname.startsWith(item.href);
                 return (
                   <Link
                     key={item.href}
@@ -175,10 +172,7 @@ export function DomoraShell({
             </div>
             <div className="grid grid-cols-2 gap-1.5">
               {visibleNav.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
+                const active = pathname.startsWith(item.href);
                 return (
                   <Link
                     key={item.href}

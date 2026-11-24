@@ -2,7 +2,8 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { Building2, Grid3X3, Layers, User, FileText, Wrench, CreditCard } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Building2, Grid3X3, Layers, User, FileText, Wrench, CreditCard, Plus, X } from "lucide-react";
 import { UNIT_VISUAL_STATES, type UnitVisualStateKey } from "@/lib/tokens";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 
@@ -72,8 +73,20 @@ export function BuildingExplorer({
     [buildings, selectedBuildingId]
   );
 
+  const router = useRouter();
   const [selectedFloorNumber, setSelectedFloorNumber] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"AUTO" | "GRID">("AUTO");
+  const [addUnitOpen, setAddUnitOpen] = useState(false);
+  const [unitError, setUnitError] = useState<string | null>(null);
+  const [savingUnit, setSavingUnit] = useState(false);
+  const [unitForm, setUnitForm] = useState({
+    floorId: selectedBuilding?.floors[0]?.id ?? "",
+    unitNumber: "",
+    bedrooms: 1,
+    bathrooms: 1,
+    areaSqFt: 820,
+    targetRent: 2400,
+  });
 
   const allUnits = useMemo(
     () => selectedBuilding?.floors.flatMap((f) => f.units) ?? [],
@@ -86,6 +99,31 @@ export function BuildingExplorer({
 
   const selectedUnit =
     allUnits.find((u) => u.id === selectedUnitId) ?? allUnits[0] ?? null;
+
+  async function handleAddUnit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedBuilding) return;
+    setSavingUnit(true);
+    setUnitError(null);
+    try {
+      const res = await fetch("/api/units", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...unitForm,
+          buildingId: selectedBuilding.id,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to add unit");
+      setAddUnitOpen(false);
+      router.refresh();
+    } catch (err) {
+      setUnitError(err instanceof Error ? err.message : "Failed to add unit");
+    } finally {
+      setSavingUnit(false);
+    }
+  }
 
   if (!selectedBuilding) {
     return (
@@ -177,6 +215,25 @@ export function BuildingExplorer({
             {selectedBuilding.code}
             {!selectedBuilding.hasPhysicalPlan && " · No physical CAD plan"}
           </span>
+          <button
+            type="button"
+            onClick={() => {
+              setUnitForm({
+                floorId: selectedBuilding.floors[0]?.id ?? "",
+                unitNumber: "",
+                bedrooms: 1,
+                bathrooms: 1,
+                areaSqFt: 820,
+                targetRent: 2400,
+              });
+              setUnitError(null);
+              setAddUnitOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 bg-[#262824] text-[#FAF5EE] px-2.5 py-1 hover:bg-[#3A3D37] cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Unit</span>
+          </button>
           {selectedBuilding.hasPhysicalPlan && (
             <button
               type="button"
@@ -649,6 +706,154 @@ export function BuildingExplorer({
           )}
         </aside>
       </div>
+
+      {addUnitOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#262824]/60 p-4"
+        >
+          <div className="w-full max-w-md border border-[#C5A88A] bg-[#FAF5EE] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#C5A88A]/60 pb-3">
+              <h3 className="font-display text-2xl">
+                Add Unit to {selectedBuilding.name}
+              </h3>
+              <button type="button" onClick={() => setAddUnitOpen(false)}>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            {unitError && (
+              <p className="border border-[#8C4A3D] bg-[#8C4A3D]/10 px-3 py-2 text-xs text-[#8C4A3D]">
+                {unitError}
+              </p>
+            )}
+            <form onSubmit={handleAddUnit} className="space-y-3 text-sm">
+              <div>
+                <label className="block text-xs text-[#5A5C56] mb-1">Floor</label>
+                <select
+                  value={unitForm.floorId}
+                  onChange={(e) =>
+                    setUnitForm({ ...unitForm, floorId: e.target.value })
+                  }
+                  className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2"
+                >
+                  {selectedBuilding.floors.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-[#5A5C56] mb-1">
+                    Unit Number
+                  </label>
+                  <input
+                    required
+                    placeholder="e.g. 205"
+                    value={unitForm.unitNumber}
+                    onChange={(e) =>
+                      setUnitForm({ ...unitForm, unitNumber: e.target.value })
+                    }
+                    className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2 font-mono-num"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#5A5C56] mb-1">
+                    Target Rent ($)
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={100}
+                    value={unitForm.targetRent}
+                    onChange={(e) =>
+                      setUnitForm({
+                        ...unitForm,
+                        targetRent: Number(e.target.value),
+                      })
+                    }
+                    className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2 font-mono-num"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs text-[#5A5C56] mb-1">
+                    Bedrooms
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={10}
+                    value={unitForm.bedrooms}
+                    onChange={(e) =>
+                      setUnitForm({
+                        ...unitForm,
+                        bedrooms: Number(e.target.value),
+                      })
+                    }
+                    className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2 font-mono-num"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#5A5C56] mb-1">
+                    Bathrooms
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min={0.5}
+                    max={10}
+                    value={unitForm.bathrooms}
+                    onChange={(e) =>
+                      setUnitForm({
+                        ...unitForm,
+                        bathrooms: Number(e.target.value),
+                      })
+                    }
+                    className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2 font-mono-num"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#5A5C56] mb-1">
+                    Area (sq ft)
+                  </label>
+                  <input
+                    type="number"
+                    min={150}
+                    value={unitForm.areaSqFt}
+                    onChange={(e) =>
+                      setUnitForm({
+                        ...unitForm,
+                        areaSqFt: Number(e.target.value),
+                      })
+                    }
+                    className="w-full border border-[#C5A88A] bg-[#F5EBDF] px-3 py-2 font-mono-num"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#C5A88A]/60">
+                <button
+                  type="button"
+                  onClick={() => setAddUnitOpen(false)}
+                  className="px-4 py-2 border border-[#C5A88A] text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingUnit}
+                  className="px-5 py-2 bg-[#262824] text-[#FAF5EE] text-xs font-medium"
+                >
+                  {savingUnit ? "Adding..." : "Add Unit"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
